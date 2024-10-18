@@ -36,7 +36,6 @@ def run_maniskill2_eval_single_episode(
     additional_env_save_tags=None,
     logging_dir="./results",
 ):
-
     if additional_env_build_kwargs is None:
         additional_env_build_kwargs = {}
 
@@ -63,6 +62,8 @@ def run_maniskill2_eval_single_episode(
         **kwargs,
     )
 
+    env = env.unwrapped  # get the actual env object
+
     # initialize environment
     env_reset_options = {
         "robot_init_options": {
@@ -84,7 +85,7 @@ def run_maniskill2_eval_single_episode(
         }
     obs, _ = env.reset(options=env_reset_options)
     # for long-horizon environments, we check if the current subtask is the final subtask
-    is_final_subtask = env.is_final_subtask() 
+    is_final_subtask = env.is_final_subtask()
 
     # Obtain language instruction
     if instruction is not None:
@@ -122,7 +123,7 @@ def run_maniskill2_eval_single_episode(
         obs, reward, done, truncated, info = env.step(
             np.concatenate([action["world_vector"], action["rot_axangle"], action["gripper"]]),
         )
-        
+
         success = "success" if done else "failure"
         new_task_description = env.get_language_instruction()
         if new_task_description != task_description:
@@ -135,6 +136,9 @@ def run_maniskill2_eval_single_episode(
         image = get_image_from_maniskill2_obs_dict(env, obs, camera_name=obs_camera_name)
         images.append(image)
         timestep += 1
+
+        if timestep >= max_episode_steps:
+            break
 
     episode_stats = info.get("episode_stats", {})
 
