@@ -6,7 +6,7 @@ import tensorflow as tf
 from simpler_env.evaluation.argparse import get_args
 from simpler_env.evaluation.maniskill2_evaluator import maniskill2_evaluator
 from simpler_env.policies.octo.octo_server_model import OctoServerInference
-from simpler_env.policies.rt1.rt1_model import RT1Inference
+# from simpler_env.policies.rt1.rt1_model import RT1Inference
 from simpler_env.policies.openvla.openvla_model import OpenVLAInference
 
 try:
@@ -32,12 +32,7 @@ if __name__ == "__main__":
     print(f"**** {args.policy_model} ****")
     # policy model creation; update this if you are using a new policy model
     if args.policy_model == "rt1":
-        assert args.ckpt_path is not None
-        model = RT1Inference(
-            saved_model_path=args.ckpt_path,
-            policy_setup=args.policy_setup,
-            action_scale=args.action_scale,
-        )
+        raise NotImplementedError
     elif "octo" in args.policy_model:
         if args.ckpt_path is None or args.ckpt_path == "None":
             args.ckpt_path = args.policy_model
